@@ -32,7 +32,8 @@ public enum GrobidModels {
     ENTITIES_NER("ner"),
 	ENTITIES_NERSense("nersense"),
     QUANTITIES("quantities"),
-    ENTITIES_BIOTECH("bio");
+    ENTITIES_BIOTECH("bio"),
+    FIGURE("figure");
 
     /**
      * Absolute path to the model.
