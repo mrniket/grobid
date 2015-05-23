@@ -24,11 +24,7 @@ import org.grobid.core.engines.counters.CitationParserCounters;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStreamWriter;
-import java.io.Writer;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.SortedSet;
@@ -116,6 +112,10 @@ public class FullTextParser extends AbstractParser {
 				tokenizationsBody = featSeg.getB();
 				if ( (bodytext != null) && (bodytext.trim().length() > 0) ) { 
 					rese = label(bodytext);
+                    PrintWriter out = new PrintWriter("rese.txt");
+                    out.println(rese);
+                    out.flush();
+                    out.close();
 				}
 				//System.out.println(rese);
 			}

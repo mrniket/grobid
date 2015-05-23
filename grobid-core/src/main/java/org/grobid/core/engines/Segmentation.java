@@ -19,11 +19,7 @@ import org.slf4j.LoggerFactory;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStreamWriter;
-import java.io.Writer;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.StringTokenizer;
@@ -141,6 +137,14 @@ public class Segmentation extends AbstractParser {
                     getAllLinesFeatured(doc);
             if ((content != null) && (content.trim().length() > 0)) {
                 String labelledResult = label(content);
+                try {
+                    PrintWriter out = new PrintWriter("segLabelledResult.txt");
+                    out.println(labelledResult);
+                    out.flush();
+                    out.close();
+                } catch (FileNotFoundException e) {
+                    e.printStackTrace();
+                }
                 // set the different sections of the Document object
                 doc = BasicStructureBuilder.generalResultSegmentation(doc, labelledResult, tokenizations);
 
