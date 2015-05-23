@@ -7,9 +7,9 @@ import java.io.File;
 /**
  * Created by Niket on 23/05/15.
  */
-public class FeaturesTrainer extends AbstractTrainer {
+public class FigureTrainer extends AbstractTrainer {
 
-    public FeaturesTrainer(GrobidModels model) {
+    public FigureTrainer(GrobidModels model) {
         super(model);
     }
 
