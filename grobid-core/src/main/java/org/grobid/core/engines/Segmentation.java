@@ -165,13 +165,13 @@ public class Segmentation extends AbstractParser {
                     }
                     PNMRegistry.registerAllServicesProviders();
 
-                    // filter all .jpg and .png files
+                    // filter all .jpg, .png and .vec files
                     File directoryPath = new File(documentSource.getXmlFile().getAbsolutePath() + "_data");
                     if (directoryPath.exists()) {
                         File[] files = directoryPath.listFiles();
                         if (files != null) {
                             for (final File currFile : files) {
-                                if (currFile.getName().toLowerCase().endsWith(".png")) {
+                                if (currFile.getName().toLowerCase().endsWith(".png") | currFile.getName().toLowerCase().endsWith(".vec")) {
                                     try {
                                         FileUtils.copyFileToDirectory(currFile, assetFile);
                                     } catch (IOException e) {
