@@ -575,6 +575,18 @@ public class Engine implements Closeable {
         return resultDoc.getTei();
     }
 
+    public void extractFigures(String inputFile, String assetPath) {
+        FigureParser figureParser = parsers.getFigureParser();
+
+        Document resultDoc;
+        LOGGER.debug("Starting processing extractFigures on " + inputFile);
+        long time =  System.currentTimeMillis();
+        figureParser.processing(inputFile, assetPath);
+        LOGGER.debug("Ending processing extractFigures on " + inputFile + ". Time to process: "
+                + (System.currentTimeMillis() - time) + "ms");
+
+    }
+
     /**
      * Process all the PDF in a given directory with a header extraction and
      * produce the corresponding training data format files for manual
