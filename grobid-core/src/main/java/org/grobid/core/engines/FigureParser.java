@@ -1,9 +1,12 @@
 package org.grobid.core.engines;
 
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.FilenameUtils;
 import org.grobid.core.GrobidModels;
 import org.grobid.core.document.Document;
 import org.grobid.core.document.DocumentPiece;
 import org.grobid.core.document.DocumentPointer;
+import org.grobid.core.dom.FigureDomParser;
 import org.grobid.core.features.FeatureFactory;
 import org.grobid.core.features.FeaturesVectorFulltext;
 import org.grobid.core.layout.Block;
@@ -11,7 +14,9 @@ import org.grobid.core.layout.LayoutToken;
 import org.grobid.core.utilities.GrobidProperties;
 import org.grobid.core.utilities.Pair;
 
+import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
@@ -41,7 +46,30 @@ public class FigureParser extends AbstractParser {
     public void processing(String input, String assetPath) {
         Document doc = parsers.getSegmentationParser().processing(input, assetPath);
 
+        try {
+            // create figureVecs directory if it doesn't already exist
+            File figureVecDirectory = new File(assetPath + "/figureVecs");
+            figureVecDirectory.mkdirs();
+            FileUtils.cleanDirectory(figureVecDirectory);
 
+            // create figureSVGs directory if it doesn't already exist
+            File figureSVGDirectory = new File(assetPath + "/figureSVGs");
+            figureSVGDirectory.mkdirs();
+            FileUtils.cleanDirectory(figureSVGDirectory);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        File folder = new File(assetPath);
+        File[] listOfFiles = folder.listFiles();
+
+        for (int i = 0; i < listOfFiles.length; i++) {
+            if (listOfFiles[i].isFile() && FilenameUtils.getExtension(listOfFiles[i].getName()).equals("vec")) {
+                FigureDomParser.separateFigures(listOfFiles[i], assetPath);
+            }
+        }
+
+        System.out.println("done");
     }
 
     public void processingFigures(Document doc) {
