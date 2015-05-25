@@ -44,9 +44,10 @@ public class FigureParser extends AbstractParser {
      * Processing with application of the segmentation model
      */
     public void processing(String input, String assetPath) {
-        Document doc = parsers.getSegmentationParser().processing(input, assetPath);
-
         try {
+            //clear assetPath directory
+            FileUtils.cleanDirectory(new File(assetPath));
+
             // create figureVecs directory if it doesn't already exist
             File figureVecDirectory = new File(assetPath + "/figureVecs");
             figureVecDirectory.mkdirs();
@@ -60,6 +61,8 @@ public class FigureParser extends AbstractParser {
             e.printStackTrace();
         }
 
+        Document doc = parsers.getSegmentationParser().processing(input, assetPath);
+
         File folder = new File(assetPath);
         File[] listOfFiles = folder.listFiles();
 
@@ -68,6 +71,9 @@ public class FigureParser extends AbstractParser {
                 FigureDomParser.separateFigures(listOfFiles[i], assetPath);
             }
         }
+
+//        FigureDomParser.separateFigures(listOfFiles[7], assetPath);
+
 
         System.out.println("done");
     }
