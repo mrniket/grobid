@@ -547,6 +547,7 @@ public class PDF2XMLSaxParser extends DefaultHandler {
 							token.setWidth(currentWidth);
 							token.setHeight(currentHeight);
 							token.setFontSize(currentFontSize);
+                            token.setPageNumber(currentPage);
 
 							if (!diaresis && !accent) {
 								block.addToken(token);
@@ -719,17 +720,17 @@ public class PDF2XMLSaxParser extends DefaultHandler {
 				String name = atts.getQName(i);
 				String value = atts.getValue(i);
 
-				if ((name != null) && (value != null)) {
-					if (name.equals("id")) {
-						;
-					} else if (name.equals("number")) {
-
-					} else if (name.equals("width")) {
-
-					} else if (name.equals("height")) {
-
-					}
-				}
+//				if ((name != null) && (value != null)) {
+//					if (name.equals("id")) {
+//						;
+//					} else if (name.equals("number")) {
+//
+//					} else if (name.equals("width")) {
+//
+//					} else if (name.equals("height")) {
+//
+//					}
+//				}
 			}
 
 			/*
@@ -796,20 +797,20 @@ public class PDF2XMLSaxParser extends DefaultHandler {
 				String name = atts.getQName(i);
 				String value = atts.getValue(i);
 
-				if ((name != null) && (value != null)) {
-					if (name.equals("id")) {
-
-					} else if (name.equals("x")) {
-
-					} else if (name.equals("y")) {
-
-					} else if (name.equals("width")) {
-
-					} else if (name.equals("height")) {
-
-					}
-
-				}
+//				if ((name != null) && (value != null)) {
+//					if (name.equals("id")) {
+//
+//					} else if (name.equals("x")) {
+//
+//					} else if (name.equals("y")) {
+//
+//					} else if (name.equals("width")) {
+//
+//					} else if (name.equals("height")) {
+//
+//					}
+//
+//				}
 			}
 		} else if (qName.equals("TOKEN")) {
 			int length = atts.getLength();

@@ -183,6 +183,7 @@ public class Block {
                 ", startToken=" + startToken +
                 ", endToken=" + endToken +
                 ", type=" + type +
+                ", " + "text=" + text +
                 '}';
     }
 }

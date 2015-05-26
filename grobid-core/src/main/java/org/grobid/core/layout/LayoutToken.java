@@ -17,6 +17,7 @@ public class LayoutToken {
     private String colorFont = null;
     public double fontSize = 0.0;
     private boolean rotation = false;
+    private int pageNumber = 0;
 
     public LayoutToken() {
     }
@@ -115,5 +116,13 @@ public class LayoutToken {
         return "LayoutToken{" +
                 "text='" + text + '\'' +
                 '}';
+    }
+
+    public void setPageNumber(int pageNumber) {
+        this.pageNumber = pageNumber;
+    }
+
+    public int getPageNumber() {
+        return pageNumber;
     }
 }

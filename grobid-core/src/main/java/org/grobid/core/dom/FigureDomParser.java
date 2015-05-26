@@ -5,13 +5,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-import org.w3c.dom.NodeList;
-import org.xml.sax.SAXException;
 
 import javax.swing.*;
 import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerException;
@@ -23,7 +19,9 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -41,83 +39,8 @@ public class FigureDomParser {
     private static final Logger LOGGER = LoggerFactory.getLogger(FigureDomParser.class);
 
     public static void separateFigures(File inputFile, String assetPath) {
-
-        try {
-            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-            DocumentBuilder builder = factory.newDocumentBuilder();
-            Document document = builder.parse(inputFile);
-            Element root = document.getDocumentElement();
-            NodeList nodeList = root.getChildNodes();
-            List<Element> clipElements = new ArrayList<Element>();
-
-            // group elements within the same clipZone together
-            HashMap<String, List<Element>> clipZoneGroups = new HashMap<String, List<Element>>();
-            for (int i = 0; i < nodeList.getLength(); i++) {
-                Element element = (Element) nodeList.item(i);
-                String clipZoneID = "";
-                if (element.getNodeName().equals("CLIP")) {
-                    clipZoneID = element.getAttribute("idClipZone");
-                    clipElements.add(element);
-                } else {
-                    clipZoneID = element.getAttribute("clipZone");
-                }
-                if (!clipZoneID.equals("")) {
-                    addElementToGroup(clipZoneID, element, clipZoneGroups);
-                }
-            }
-
-//            writeClipsToWindow(new ArrayList<Element>(clipElements), "before");
-
-            // merge overlapping clip zones together
-            Collections.sort(clipElements, new FigureDomParser().new AreaComparator());
-            for (int i = 0; i < clipElements.size(); i++) {
-                Element element = clipElements.get(i);
-                for (int j = i + 1; j < clipElements.size(); j++) {
-                    Element element1 = clipElements.get(j);
-                    if (intersect(element, element1)) {
-                        mergeClipZones(element, element1, clipZoneGroups);
-                        clipElements.remove(element1);
-                    }
-                }
-            }
-
-//            writeClipsToWindow(new ArrayList<Element>(clipElements), "after");
-
-            for (Element element : clipElements) {
-                int height = (int) Float.parseFloat(element.getAttribute("height"));
-                int width = (int) Float.parseFloat(element.getAttribute("width"));
-                int x = (int) Float.parseFloat(element.getAttribute("x"));
-                int y = (int) Float.parseFloat(element.getAttribute("y"));
-                System.out.println("------------------------------------------------");
-                System.out.println("x: " + x + "\ty: " + y + "\theight: " + height + "\twidth: " + width);
-                System.out.println("------------------------------------------------\n");
-
-            }
-
-            outerloop:
-            for (String key: ((HashMap<String, List<Element>>)clipZoneGroups.clone()).keySet()) {
-                for (Element element : clipZoneGroups.get(key)) {
-                    if (element.getNodeName().equals("GROUP")) {
-                        continue outerloop;
-                    }
-                }
-                clipZoneGroups.remove(key);
-            }
-
-            // separate the clipZones into their own Documents
-            separateClipZones(clipZoneGroups, builder, assetPath);
-
-            // convert the .vec files into SVG
-            convertVecsToSVGs(assetPath);
-
-
-        } catch (ParserConfigurationException e) {
-            e.printStackTrace();
-        } catch (SAXException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        // convert the .vec files into SVG
+        convertVecsToSVGs(assetPath);
     }
 
     private static void writeClipsToWindow(List<Element> clipZones, String windowName) {
@@ -154,7 +77,7 @@ public class FigureDomParser {
     private static void convertVecsToSVGs(String assetPath) {
 
         // get all files
-        File folder = new File(assetPath + "/figureVecs");
+        File folder = new File(assetPath);
         File[] listOfFiles = folder.listFiles();
 
         for (File file : listOfFiles) {
@@ -206,7 +129,7 @@ public class FigureDomParser {
 
                 // save Document
                 DOMSource source = new DOMSource(document);
-                StreamResult result = new StreamResult(new File(assetPath + "/figureVecs/page" + pageNo + "Figure" + figureNo + ".vec"));
+                StreamResult result = new StreamResult(new File(assetPath + "/figureVecs/page" + pageNo + ".vec"));
                 transformer.transform(source, result);
                 figureNo++;
             }

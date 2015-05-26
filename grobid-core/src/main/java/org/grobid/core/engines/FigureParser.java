@@ -13,15 +13,25 @@ import org.grobid.core.layout.Block;
 import org.grobid.core.layout.LayoutToken;
 import org.grobid.core.utilities.GrobidProperties;
 import org.grobid.core.utilities.Pair;
+import org.w3c.dom.Element;
+import org.xml.sax.SAXException;
 
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerConfigurationException;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.SortedSet;
+import java.util.*;
 import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * @author Niket Shah
@@ -34,8 +44,9 @@ public class FigureParser extends AbstractParser {
     // default bins for relative position
     private static final int NBBINS = 12;
 
+
     public FigureParser(EngineParsers parsers) {
-        super(GrobidModels.FIGURE);
+        super(GrobidModels.FULLTEXT);
         this.parsers = parsers;
         GrobidProperties.getInstance();
     }
@@ -61,24 +72,32 @@ public class FigureParser extends AbstractParser {
             e.printStackTrace();
         }
 
-        Document doc = parsers.getSegmentationParser().processing(input, assetPath);
+//        Document doc = parsers.getSegmentationParser().processing(input, assetPath);
+        try {
+            Document document = parsers.getFullTextParser().processing(input, false, false, 0, assetPath, -1, -1, true);
 
-        File folder = new File(assetPath);
-        File[] listOfFiles = folder.listFiles();
+            File folder = new File(assetPath);
+            File[] listOfFiles = folder.listFiles();
 
-        for (int i = 0; i < listOfFiles.length; i++) {
-            if (listOfFiles[i].isFile() && FilenameUtils.getExtension(listOfFiles[i].getName()).equals("vec")) {
-                FigureDomParser.separateFigures(listOfFiles[i], assetPath);
+            for (int i = 0; i < listOfFiles.length; i++) {
+                if (listOfFiles[i].isFile() && FilenameUtils.getExtension(listOfFiles[i].getName()).equals("vec")) {
+                    FigureDomParser.separateFigures(listOfFiles[i], assetPath);
+                }
             }
+
+            processingFigures(document, assetPath);
+        } catch (Exception e) {
+            e.printStackTrace();
         }
 
 //        FigureDomParser.separateFigures(listOfFiles[7], assetPath);
+//        processingFigures(doc);
 
 
         System.out.println("done");
     }
 
-    public void processingFigures(Document doc) {
+    public void processingFigures(Document doc, String assetPath) {
         SortedSet<DocumentPiece> documentBodyParts = doc.getDocumentPart(SegmentationLabel.BODY);
         Pair<String,List<String>> featSeg = getFiguresFeatured(doc, documentBodyParts);
         String labelledText = null;
@@ -90,9 +109,20 @@ public class FigureParser extends AbstractParser {
             tokenizationsBody = featSeg.getB();
             if ( (figureText != null) && (figureText.trim().length() > 0) ) {
                 labelledText = label(figureText);
-
+                String[] lines = labelledText.split("\n");
+                List<LayoutToken> layoutTokens = doc.getBodyLayoutTokens();
+                    System.out.println("lines: " + lines.length);
+                    System.out.println("layoutTokens: " + layoutTokens.size());
+                Map<Integer, org.w3c.dom.Document> pageToSVGDocument = openSVGDocuments(assetPath);
+                for (int i = 0; i < lines.length; i++) {
+                    String[] features = lines[i].split(" ");
+                    String label = features[features.length - 1];
+                    if (label.contains("figure_head") || label.contains("trash")) {
+                        addLayoutTokenToSVG(pageToSVGDocument, layoutTokens.get(i));
+                    }
+                }
+                saveAndCloseSVGDocuments(pageToSVGDocument, assetPath);
                 // print file out for debugging purposes
-
                 try {
                     PrintWriter out = new PrintWriter("rese.txt");
                     out.println(labelledText);
@@ -103,6 +133,75 @@ public class FigureParser extends AbstractParser {
                 }
             }
         }
+    }
+
+    private void addLayoutTokenToSVG(Map<Integer, org.w3c.dom.Document> pageToSVGDocument, LayoutToken layoutToken) {
+        org.w3c.dom.Document document = pageToSVGDocument.get(layoutToken.getPageNumber());
+        if (document != null) {
+            Element rootElement = (Element)document.getFirstChild();
+            Element element = document.createElement("text");
+            element.setAttribute("x", String.valueOf(layoutToken.getX()));
+            element.setAttribute("y", String.valueOf(layoutToken.getY()));
+            element.setAttribute("style", "font-size:" + layoutToken.getFontSize() + "px");
+            if (layoutToken.getRotation())
+            element.setTextContent(layoutToken.getText());
+            rootElement.appendChild(element);
+        }
+    }
+
+    private void saveAndCloseSVGDocuments(Map<Integer, org.w3c.dom.Document> pageToSVGDocument, String assetPath) {
+        try {
+            for (Integer pageNumber : pageToSVGDocument.keySet()) {
+                org.w3c.dom.Document document = pageToSVGDocument.get(pageNumber);
+                // write the content into xml file
+                TransformerFactory transformerFactory = TransformerFactory.newInstance();
+                Transformer transformer = transformerFactory.newTransformer();
+                DOMSource source = new DOMSource(document);
+                StreamResult result = new StreamResult(new File(assetPath + "/figureSVGs/page-" + pageNumber + ".svg"));
+                transformer.transform(source, result);
+            }
+        } catch (TransformerConfigurationException e) {
+            e.printStackTrace();
+        } catch (TransformerException e) {
+            e.printStackTrace();
+        }
+
+
+    }
+
+    private Map<Integer, org.w3c.dom.Document> openSVGDocuments(String assetPath) {
+        try {
+            File figureSVGDirectory = new File(assetPath + "/figureSVGs");
+            File[] listOfFiles = figureSVGDirectory.listFiles();
+
+            Map<Integer, org.w3c.dom.Document> pageToSVGDocument = new HashMap<Integer, org.w3c.dom.Document>();
+
+            DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
+            DocumentBuilder documentBuilder = documentBuilderFactory.newDocumentBuilder();
+
+            for (int i = 0; i < listOfFiles.length; i++) {
+                File file = listOfFiles[i];
+                String fileName = file.getName();
+                if (file.isFile() && FilenameUtils.getExtension(fileName).equals("svg")) {
+                    Pattern pattern = Pattern.compile("image-(\\d+)");
+                    Matcher matcher = pattern.matcher(fileName);
+                    matcher.find();
+                    Integer pageNumber = Integer.parseInt(matcher.group(1));
+
+                    org.w3c.dom.Document document = documentBuilder.parse(file);
+
+                    pageToSVGDocument.put(pageNumber - 1, document);
+                }
+            }
+            return pageToSVGDocument;
+        } catch (ParserConfigurationException e) {
+            e.printStackTrace();
+        } catch (SAXException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
 

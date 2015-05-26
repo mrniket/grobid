@@ -7,6 +7,9 @@ import org.grobid.core.document.Document;
 import org.grobid.core.document.DocumentPiece;
 import org.grobid.core.document.DocumentPointer;
 import org.grobid.core.document.TEIFormater;
+import org.grobid.core.engines.citations.LabeledReferenceResult;
+import org.grobid.core.engines.citations.ReferenceSegmenter;
+import org.grobid.core.engines.counters.CitationParserCounters;
 import org.grobid.core.exceptions.GrobidException;
 import org.grobid.core.exceptions.GrobidResourceException;
 import org.grobid.core.features.FeatureFactory;
@@ -14,13 +17,9 @@ import org.grobid.core.features.FeaturesVectorFulltext;
 import org.grobid.core.layout.Block;
 import org.grobid.core.layout.LayoutToken;
 import org.grobid.core.utilities.GrobidProperties;
-import org.grobid.core.utilities.LanguageUtilities;
+import org.grobid.core.utilities.KeyGen;
 import org.grobid.core.utilities.Pair;
 import org.grobid.core.utilities.TextUtilities;
-import org.grobid.core.utilities.KeyGen;
-import org.grobid.core.engines.citations.LabeledReferenceResult;
-import org.grobid.core.engines.citations.ReferenceSegmenter;
-import org.grobid.core.engines.counters.CitationParserCounters;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -193,6 +192,8 @@ public class FullTextParser extends AbstractParser {
 		if ( (blocks == null) || blocks.size() == 0) {
 			return null;
 		}
+
+        List<LayoutToken> bodyTokens = new ArrayList<LayoutToken>();
 
         // vector for features
         FeaturesVectorFulltext features;
@@ -556,10 +557,12 @@ public class FullTextParser extends AbstractParser {
 	                mm++;
 	                nn++;
 	                previousFeatures = features;
+                    bodyTokens.add(token);
             	}
             	//blockPos++;
 			}
         }
+        doc.setBodyLayoutTokens(bodyTokens);
         if (previousFeatures != null)
             fulltext.append(previousFeatures.printVector());
 

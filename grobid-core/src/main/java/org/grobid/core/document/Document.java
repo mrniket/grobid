@@ -6,7 +6,6 @@ import com.google.common.collect.Iterables;
 import com.google.common.collect.SortedSetMultimap;
 import org.grobid.core.data.BibDataSet;
 import org.grobid.core.data.BiblioItem;
-import org.grobid.core.engines.Engine;
 import org.grobid.core.engines.SegmentationLabel;
 import org.grobid.core.exceptions.GrobidException;
 import org.grobid.core.exceptions.GrobidExceptionStatus;
@@ -55,6 +54,8 @@ public class Document {
 
     private List<Block> blocks = null;
     private List<Cluster> clusters = null;
+
+    private List<LayoutToken> bodyLayoutTokens;
 
     private List<Integer> blockHeaders = null;
     private List<Integer> blockFooters = null;
@@ -1375,5 +1376,13 @@ public class Document {
 
     public BibDataSet getBibDataSetByTeiId(String teiId) {
         return teiIdToBibDataSets.get(teiId);
+    }
+
+    public void setBodyLayoutTokens(List<LayoutToken> bodyLayoutTokens) {
+        this.bodyLayoutTokens = bodyLayoutTokens;
+    }
+
+    public List<LayoutToken> getBodyLayoutTokens() {
+        return bodyLayoutTokens;
     }
 }
