@@ -43,6 +43,7 @@ public class FigureParser extends AbstractParser {
 
     // default bins for relative position
     private static final int NBBINS = 12;
+    private LayoutToken previousLayoutToken;
 
 
     public FigureParser(EngineParsers parsers) {
@@ -139,13 +140,30 @@ public class FigureParser extends AbstractParser {
         org.w3c.dom.Document document = pageToSVGDocument.get(layoutToken.getPageNumber());
         if (document != null) {
             Element rootElement = (Element)document.getFirstChild();
-            Element element = document.createElement("text");
-            element.setAttribute("x", String.valueOf(layoutToken.getX()));
-            element.setAttribute("y", String.valueOf(layoutToken.getY()));
-            element.setAttribute("style", "font-size:" + layoutToken.getFontSize() + "px");
-            if (layoutToken.getRotation())
-            element.setTextContent(layoutToken.getText());
-            rootElement.appendChild(element);
+            if (previousLayoutToken != null && previousLayoutToken.getX() == layoutToken.getX() && previousLayoutToken.getY() == layoutToken.getY()) {
+                Element element = (Element)rootElement.getLastChild();
+                element.setTextContent(element.getTextContent() + layoutToken.getText());
+            } else {
+                Element element = document.createElement("text");
+                element.setAttribute("x", String.valueOf(layoutToken.getX()));
+                element.setAttribute("y", String.valueOf(layoutToken.getY()));
+                StringBuilder stringBuilder = new StringBuilder();
+                stringBuilder.append("font-size:" + layoutToken.getFontSize() + "px;");
+                if (layoutToken.getBold()) {
+                    stringBuilder.append("font-weight:bold;");
+                }
+                if (layoutToken.getItalic()) {
+                    stringBuilder.append("font-style:italic;");
+                }
+                if (layoutToken.getRotation()) {
+                    element.setAttribute("transform", "rotate(" + layoutToken.getRotationValue() + " " + layoutToken.getX() + " " + layoutToken.getY() + ")");//"rotate(" + layoutToken.getRotationValue() + ")");
+                }
+                element.setAttribute("style", stringBuilder.toString());
+                element.setAttribute("dominant-baseline", "text-after-edge");
+                element.setTextContent(layoutToken.getText());
+                rootElement.appendChild(element);
+            }
+            previousLayoutToken = layoutToken;
         }
     }
 

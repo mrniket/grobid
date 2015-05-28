@@ -18,6 +18,7 @@ public class LayoutToken {
     public double fontSize = 0.0;
     private boolean rotation = false;
     private int pageNumber = 0;
+    private int rotationValue = 0;
 
     public LayoutToken() {
     }
@@ -124,5 +125,13 @@ public class LayoutToken {
 
     public int getPageNumber() {
         return pageNumber;
+    }
+
+    public int getRotationValue() {
+        return rotationValue;
+    }
+
+    public void setRotationValue(int rotationValue) {
+        this.rotationValue = rotationValue;
     }
 }

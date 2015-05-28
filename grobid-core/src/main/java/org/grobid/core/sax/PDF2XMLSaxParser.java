@@ -48,9 +48,10 @@ public class PDF2XMLSaxParser extends DefaultHandler {
 	private Document doc = null;
 
 	private int currentPage = -1;
-	private GrobidAnalyzer analyzer = GrobidAnalyzer.getInstance(); 
+	private GrobidAnalyzer analyzer = GrobidAnalyzer.getInstance();
+    private int currentRotationValue;
 
-	public PDF2XMLSaxParser() {
+    public PDF2XMLSaxParser() {
 		blabla = new StringBuffer();
 		tokenizations = new ArrayList<String>();
 	}
@@ -531,7 +532,7 @@ public class PDF2XMLSaxParser extends DefaultHandler {
 							if (currentRotation) {
 								// if the text is rotated, it appears that the font size is multiplied
 								// by 2? we should have a look at pdf2xml for this
-								currentFontSize = currentFontSize / 2;
+								//currentFontSize = currentFontSize / 2;
 							}
 
 							if (currentFont != null)
@@ -541,6 +542,7 @@ public class PDF2XMLSaxParser extends DefaultHandler {
 							token.setItalic(currentItalic);
 							token.setBold(currentBold);
 							token.setRotation(currentRotation);
+                            token.setRotationValue(currentRotationValue);
 							token.setColorFont(colorFont);
 							token.setX(currentX);
 							token.setY(currentY);
@@ -853,11 +855,14 @@ public class PDF2XMLSaxParser extends DefaultHandler {
 							colorFont = value;
 						}
 					} else if (name.equals("rotation")) {
-						if (value.equals("0"))
-							currentRotation = false;
-						else
-							currentRotation = true;
-					} else if (name.equals("x")) {
+						if (value.equals("0")) {
+                            currentRotation = false;
+                        } else {
+                            currentRotation = true;
+                        }
+					} else if (name.equals("angle")) {
+                        currentRotationValue = Integer.parseInt(value);
+                    } else if (name.equals("x")) {
 						double x = Double.parseDouble(value);
 						if (x != currentX) {
 							currentX = x;
