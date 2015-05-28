@@ -156,10 +156,14 @@ public class FigureParser extends AbstractParser {
                     stringBuilder.append("font-style:italic;");
                 }
                 if (layoutToken.getRotation()) {
-                    element.setAttribute("transform", "rotate(" + layoutToken.getRotationValue() + " " + layoutToken.getX() + " " + layoutToken.getY() + ")");//"rotate(" + layoutToken.getRotationValue() + ")");
+                    element.setAttribute("dominant-baseline", "text-after-edge");
+                    element.setAttribute("transform", "rotate(" + (-1 * layoutToken.getRotationValue()) + " " + layoutToken.getX() + " " + (layoutToken.getY()) + ") translate(" + (-1 * layoutToken.height) + " " + (layoutToken.width /2) + " )");
+                } else {
+                    element.setAttribute("dominant-baseline", "text-before-edge");
                 }
+                element.setAttribute("font-family", layoutToken.getFont().split("\\+")[1]);
                 element.setAttribute("style", stringBuilder.toString());
-                element.setAttribute("dominant-baseline", "text-after-edge");
+
                 element.setTextContent(layoutToken.getText());
                 rootElement.appendChild(element);
             }
