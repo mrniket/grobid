@@ -1,6 +1,7 @@
 package org.grobid.core.dom;
 
 import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
@@ -38,11 +39,6 @@ public class FigureDomParser {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(FigureDomParser.class);
 
-    public static void separateFigures(File inputFile, String assetPath) {
-        // convert the .vec files into SVG
-        convertVecsToSVGs(assetPath);
-    }
-
     private static void writeClipsToWindow(List<Element> clipZones, String windowName) {
         JFrame window = new JFrame();
         window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -74,32 +70,47 @@ public class FigureDomParser {
         return true;//rectangle1.contains(rectangle2) || rectangle1.intersects(rectangle2);
     }
 
-    private static void convertVecsToSVGs(String assetPath) {
+    public static void convertVecsToSVGs(String assetPath) {
+
+        if (assetPath.charAt(assetPath.length()  -1) == '/') {
+            assetPath = StringUtils.chop(assetPath);
+        }
+
+        // escape spaces
+        assetPath = assetPath.replaceAll(" ", "\\ ");
 
         // get all files
         File folder = new File(assetPath);
         File[] listOfFiles = folder.listFiles();
 
+        System.out.println("assetPath: " + assetPath);
+
         for (File file : listOfFiles) {
+            if (file.isFile()) {
+//                System.out.println("got file: " + file.getName());
+                System.out.println("absolute path: " + file.getAbsolutePath().replaceAll(" ", "\\ "));
+//                System.out.println("absolute path: " + file.getAbsolutePath().replaceAll("[a-zA-Z]( )[a-zA-Z]", "\\ "));
+//                System.out.println(assetPath + "/figureSVGs/" + FilenameUtils.removeExtension(file.getName()) + ".svg");
+                String[] cmd = {
+                        "/usr/local/bin/python",
+                        "/Users/Niket/Downloads/vec2svg-2.py",
+                        "-i",
+                        file.getAbsolutePath().replaceAll(" ", "\\ "),
+                        "-o",
+                        assetPath + "/figureSVGs/" + FilenameUtils.removeExtension(file.getName()) + ".svg"
+                };
+                try {
+                    Process process = Runtime.getRuntime().exec(cmd);
 
-            String[] cmd = {
-                    "python",
-                    "/Users/Niket/Downloads/vec2svg-2.py",
-                    "-i",
-                    file.getAbsolutePath(),
-                    "-o",
-                    assetPath + "/figureSVGs/" + FilenameUtils.removeExtension(file.getName()) + ".svg"
-            };
-            try {
-                Process process = Runtime.getRuntime().exec(cmd);
-
-                BufferedReader stdInput = new BufferedReader(new InputStreamReader(process.getInputStream()));
-                String s;
-                while ((s = stdInput.readLine()) != null) {
-                    LOGGER.debug(s);
+                    BufferedReader stdInput = new BufferedReader(new InputStreamReader(process.getInputStream()));
+                    String s;
+                    while ((s = stdInput.readLine()) != null) {
+                        LOGGER.debug(s);
+                        System.out.println(s);
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
                 }
-            } catch (IOException e) {
-                e.printStackTrace();
             }
         }
     }

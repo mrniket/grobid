@@ -1,6 +1,5 @@
 package org.grobid.core.engines;
 
-import eugfc.imageio.plugins.PNMRegistry;
 import org.apache.commons.io.FileUtils;
 import org.grobid.core.GrobidModels;
 import org.grobid.core.document.BasicStructureBuilder;
@@ -163,7 +162,7 @@ public class Segmentation extends AbstractParser {
                             LOGGER.error("Failed to create directory: " + assetFile.getPath());
                         }
                     }
-                    PNMRegistry.registerAllServicesProviders();
+//                    PNMRegistry.registerAllServicesProviders();
 
                     // filter all .jpg, .png and .vec files
                     File directoryPath = new File(documentSource.getXmlFile().getAbsolutePath() + "_data");

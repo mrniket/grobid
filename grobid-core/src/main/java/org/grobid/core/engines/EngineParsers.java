@@ -25,7 +25,6 @@ public class EngineParsers implements Closeable {
     private ChemicalParser chemicalParser = null;
     private Segmentation segmentationParser = null;
     private ReferenceSegmenterParser referenceSegmenterParser = null;
-    private FigureParser figureParser = null;
 
 
     public AffiliationAddressParser getAffiliationAddressParser() {
@@ -140,17 +139,6 @@ public class EngineParsers implements Closeable {
         return chemicalParser;
     }
 
-    public FigureParser getFigureParser() {
-        if (figureParser == null) {
-            synchronized (this) {
-                if (figureParser == null) {
-                    figureParser = new FigureParser(this);
-                }
-            }
-        }
-        return figureParser;
-    }
-
     @Override
     public void close() throws IOException {
         LOGGER.debug("==> Closing all resources...");
@@ -205,12 +193,6 @@ public class EngineParsers implements Closeable {
             segmentationParser.close();
             segmentationParser = null;
             LOGGER.debug("CLOSING segmentationParser");
-        }
-
-        if (figureParser != null) {
-            figureParser.close();
-            figureParser = null;
-            LOGGER.debug("CLOSING figureParser");
         }
 
         LOGGER.debug("==>All resources closed");

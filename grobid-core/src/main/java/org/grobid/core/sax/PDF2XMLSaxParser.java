@@ -1,16 +1,19 @@
 package org.grobid.core.sax;
 
-import org.grobid.core.layout.Block;
-import org.grobid.core.document.Document;
-import org.grobid.core.layout.LayoutToken;
-import org.grobid.core.utilities.TextUtilities;
 import org.grobid.core.analyzers.GrobidAnalyzer;
+import org.grobid.core.document.Document;
+import org.grobid.core.layout.Block;
+import org.grobid.core.layout.LayoutToken;
+import org.grobid.core.utilities.Pair;
+import org.grobid.core.utilities.TextUtilities;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.xml.sax.*;
-import org.xml.sax.helpers.*;
+import org.xml.sax.Attributes;
+import org.xml.sax.SAXException;
+import org.xml.sax.helpers.DefaultHandler;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * SAX parser for XML representation of PDF files obtained via xpdf pdf2xml. All
@@ -44,6 +47,8 @@ public class PDF2XMLSaxParser extends DefaultHandler {
 
 	private StringBuffer blabla = null;
 	private List<String> tokenizations = null;
+
+    Pair<Integer, Integer> currentTokenPositionPair;
 
 	private Document doc = null;
 
@@ -627,6 +632,8 @@ public class PDF2XMLSaxParser extends DefaultHandler {
 				blabla.append("\n");
 				block.setText(blabla.toString());
 				block.setNbTokens(nbTokens);
+                block.setStartToken(tokenizations.size());
+                block.setEndToken(tokenizations.size());
 				doc.addBlock(block);
 			}
 			block = new Block();
@@ -645,6 +652,8 @@ public class PDF2XMLSaxParser extends DefaultHandler {
 				block.setWidth(currentWidth);
 			if (block.getHeight() == 0.0)
 				block.setHeight(currentHeight);
+            block.setStartToken(tokenizations.size());
+            block.setEndToken(tokenizations.size());
 			doc.addBlock(block);
 			blabla = new StringBuffer();
 			nbTokens = 0;

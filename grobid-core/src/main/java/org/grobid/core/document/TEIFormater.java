@@ -1,20 +1,16 @@
 package org.grobid.core.document;
 
-import org.grobid.core.data.BibDataSet;
-import org.grobid.core.data.BiblioItem;
-import org.grobid.core.data.Date;
-import org.grobid.core.data.Person;
-import org.grobid.core.data.Keyword;
+import org.grobid.core.data.*;
+import org.grobid.core.engines.FullTextParser;
+import org.grobid.core.engines.SegmentationLabel;
 import org.grobid.core.exceptions.GrobidException;
 import org.grobid.core.lang.Language;
 import org.grobid.core.layout.Block;
+import org.grobid.core.layout.LayoutToken;
+import org.grobid.core.utilities.GrobidProperties;
+import org.grobid.core.utilities.KeyGen;
 import org.grobid.core.utilities.LanguageUtilities;
 import org.grobid.core.utilities.TextUtilities;
-import org.grobid.core.utilities.GrobidProperties;
-import org.grobid.core.engines.SegmentationLabel;
-import org.grobid.core.engines.FullTextParser;
-import org.grobid.core.utilities.KeyGen;
-import org.grobid.core.utilities.Pair;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -1053,6 +1049,7 @@ public class TEIFormater {
                                 	Document doc,
 									boolean generateIDs,
 									boolean generateImageReferences) throws Exception {
+        List<LayoutToken> layoutTokens = doc.getBodyLayoutTokens();
         StringTokenizer st = new StringTokenizer(result, "\n");
         String s1 = null;
         String s2 = null;
@@ -1094,13 +1091,17 @@ public class TEIFormater {
 						imag = imag.substring(ind2+1, imag.length());
 	                    if (imag.indexOf(".vec") != -1) {
 	                        nto.setType(NonTextObject.GraphicVectoriel);
+                            nto.setFile(bl.getText().split(" ")[1]);
+                            nto.setPage(bl.getPage());
 	                    } else {
 	                        nto.setType(NonTextObject.GraphicBitmap);
 							imag = imag.replace(".ppm", ".png").replace(".jpg", ".png");
-	                    }
-						if ( (nto.getType() == NonTextObject.GraphicBitmap) 
+                            nto.setFile(bl.getText().split(" ")[1]);
+                            nto.setPage(bl.getPage());
+                        }
+						if ( (nto.getType() == NonTextObject.GraphicBitmap || nto.getType() == NonTextObject.GraphicVectoriel)
 								&& (nto.getFile() != null) 
-								&& (nto.getFile().indexOf(".png") != -1) ) {
+								&& (nto.getFile().indexOf(".png") != -1 || nto.getFile().indexOf(".vec") != -1)) {
 		                    nto.setFile(imag);
 		                    //graphicsPosition.add(new Integer(bl.getStartToken()));
 		                    nto.setStartPosition(bl.getStartToken());
@@ -1109,6 +1110,13 @@ public class TEIFormater {
 		                    nto.setX2(bl.getX() + bl.getWidth());
 		                    nto.setY2(bl.getY() + bl.getHeight());
 		                    nto.setPage(bl.getPage());
+                            nto.setEndPosition(bl.getEndToken());
+                            String vecFile = nto.getFile();
+                            Pattern pattern = Pattern.compile("image-(\\d+)");
+                            Matcher matcher = pattern.matcher(vecFile);
+                            matcher.find();
+                            Integer pageNumber = Integer.parseInt(matcher.group(1));
+                            nto.setFile("figureSVGs/page-" + pageNumber + ".svg");
 		                    graphicObjects.add(nto);
 						}
 	                }
@@ -1119,8 +1127,11 @@ public class TEIFormater {
 				System.out.println(nto.toString());
 			}*/
 		}
+
+        int tokenIndex = -1;
 		
         while (st.hasMoreTokens()) {
+            tokenIndex++;
             boolean addSpace = false;
             String tok = st.nextToken().trim();
             if (tok.length() == 0) {
@@ -1227,9 +1238,9 @@ public class TEIFormater {
                 if (openFigure) {
 					if (generateImageReferences) {
 						// we output the graphic object before closing the figure
-						List<NonTextObject> images = getGraphicObject(graphicObjects, startPosFigure, p);
+						List<NonTextObject> images = getGraphicObject(graphicObjects, tokenIndex, layoutTokens);
 						for(NonTextObject image : images) {
-							buffer.append("\t\t\t\t\t<graphic url=\"" + image.getFile() + "\" />\n");
+							buffer.append("\t\t\t\t\t<graphic url=\"" + image.getFile().trim() + "\" />\n");
 						}
 					}
                     buffer.append("\n\t\t\t\t</figure>\n\n");
@@ -1307,9 +1318,9 @@ public class TEIFormater {
                     if (descFigure && (!lastTag0.equals("<figDesc>")) && (currentTag0.equals("<figDesc>"))) {
 						if (generateImageReferences) {
 							// we output the graphic object before closing the figure
-							List<NonTextObject> images = getGraphicObject(graphicObjects, startPosFigure, p);
+							List<NonTextObject> images = getGraphicObject(graphicObjects, tokenIndex, layoutTokens);
 							for(NonTextObject image : images) {
-								buffer.append("\t\t\t\t\t<graphic url=\"" + image.getFile() + "\" />\n");
+								buffer.append("\t\t\t\t\t<graphic url=\"" + image.getFile().trim() + "\" />\n");
 							}
 						}
                         buffer.append("\n\t\t\t\t</figure>\n\n");
@@ -1345,7 +1356,7 @@ public class TEIFormater {
                             (currentTag0.equals("<figure_head>"))) {
 						if (generateImageReferences) {		
 							// we output the graphic object before closing the figure
-							List<NonTextObject> images = getGraphicObject(graphicObjects, startPosFigure, p);
+							List<NonTextObject> images = getGraphicObject(graphicObjects, tokenIndex, layoutTokens);
 							for(NonTextObject image : images) {
 								buffer.append("\t\t\t\t\t<graphic url=\"" + image.getFile() + "\" />\n");
 							}
@@ -1393,9 +1404,9 @@ public class TEIFormater {
                 if (openFigure) {
 					if (generateImageReferences) {
 						// we output the graphic object before closing the figure
-						List<NonTextObject> images = getGraphicObject(graphicObjects, startPosFigure, p);
+						List<NonTextObject> images = getGraphicObject(graphicObjects, tokenIndex, layoutTokens);
 						for(NonTextObject image : images) {
-							buffer.append("\t\t\t\t\t<graphic url=\"" + image.getFile() + "\" />\n");
+							buffer.append("\t\t\t\t\t<graphic url=\"" + image.getFile().trim() + "\" />\n");
 						}
 					}
                     buffer.append("\n\t\t\t\t</figure>\n\n");
@@ -1833,14 +1844,12 @@ public class TEIFormater {
 	/**
 	 * Return the graphic objects in a given interval position in the document.
 	 */
-	private List<NonTextObject> getGraphicObject(List<NonTextObject> graphicObjects, int startPos, int endPos) {
+	private List<NonTextObject> getGraphicObject(List<NonTextObject> graphicObjects, int tokenIndex, List<LayoutToken> layoutTokens) {
 		List<NonTextObject> result = new ArrayList<NonTextObject>();
 		for(NonTextObject nto : graphicObjects) {
-			if ( (nto.getStartPosition() >= startPos) && (nto.getStartPosition() <= endPos) ) {
+			if ( layoutTokens.get(tokenIndex).getPageNumber() == nto.getPage() ) {
 				result.add(nto);
-			}
-			if (nto.getStartPosition() > endPos) {
-				break;
+                break;
 			}
 		}
 		return result;

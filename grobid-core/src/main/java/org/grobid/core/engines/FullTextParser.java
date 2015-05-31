@@ -7,6 +7,7 @@ import org.grobid.core.document.Document;
 import org.grobid.core.document.DocumentPiece;
 import org.grobid.core.document.DocumentPointer;
 import org.grobid.core.document.TEIFormater;
+import org.grobid.core.dom.FigureDomParser;
 import org.grobid.core.engines.citations.LabeledReferenceResult;
 import org.grobid.core.engines.citations.ReferenceSegmenter;
 import org.grobid.core.engines.counters.CitationParserCounters;
@@ -24,10 +25,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.*;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.SortedSet;
-import java.util.StringTokenizer;
+import java.util.*;
 import java.util.regex.Matcher;
 
 /**
@@ -99,7 +97,9 @@ public class FullTextParser extends AbstractParser {
         }
         try {
             // general segmentation
-            Document doc = parsers.getSegmentationParser().processing(input, assetPath, startPage, endPage); 
+            FigureParser figureParser = new FigureParser(assetPath);
+            Document doc = parsers.getSegmentationParser().processing(input, assetPath, startPage, endPage);
+            figureParser.setDocument(doc);
 			SortedSet<DocumentPiece> documentBodyParts = doc.getDocumentPart(SegmentationLabel.BODY);
 			Pair<String,List<String>> featSeg = getBodyTextFeatured(doc, documentBodyParts);
 			String rese = null;
@@ -111,12 +111,7 @@ public class FullTextParser extends AbstractParser {
 				tokenizationsBody = featSeg.getB();
 				if ( (bodytext != null) && (bodytext.trim().length() > 0) ) { 
 					rese = label(bodytext);
-                    PrintWriter out = new PrintWriter("rese.txt");
-                    out.println(rese);
-                    out.flush();
-                    out.close();
 				}
-				//System.out.println(rese);
 			}
 
             // header processing
@@ -146,6 +141,20 @@ public class FullTextParser extends AbstractParser {
                     //bds.setResBib(bib);
                 }
             }
+
+            // figure processing
+            FigureDomParser.convertVecsToSVGs(assetPath);
+            String[] lines = rese.split("\n");
+            List<LayoutToken> layoutTokens = doc.getBodyLayoutTokens();
+            Map<Integer, org.w3c.dom.Document> pageToSVGDocument = figureParser.openSVGDocuments(assetPath);
+            for (int i = 0; i < lines.length; i++) {
+                String[] features = lines[i].split(" ");
+                String label = features[features.length - 1];
+                if (label.contains("figure_head") || label.contains("trash")) {
+                    figureParser.addLayoutTokenToSVG(pageToSVGDocument, layoutTokens.get(i));
+                }
+            }
+            figureParser.saveAndCloseSVGDocuments(pageToSVGDocument, assetPath);
 
 			// possible annexes (view as a piece of full text similar to the body)
 			documentBodyParts = doc.getDocumentPart(SegmentationLabel.ANNEX);
