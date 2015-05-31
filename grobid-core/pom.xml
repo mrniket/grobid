@@ -144,14 +144,6 @@
 		    <artifactId>guava</artifactId>
 		    <version>16.0.1</version>
 		</dependency>
-
-        <dependency>
-			<!-- this is an ImageIO plugin for PPM format support -->
-			<!-- see https://github.com/eug/imageio-pnm -->
-			<groupId>eugfc</groupId>
-			<artifactId>imageio-pnm</artifactId>
-			<version>1.0</version>
-		</dependency>
 		
 		<dependency>
 			<groupId>org.wipo.analysers</groupId>
