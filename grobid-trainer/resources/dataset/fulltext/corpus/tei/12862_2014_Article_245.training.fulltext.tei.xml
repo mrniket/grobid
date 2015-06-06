@@ -47,7 +47,7 @@
 			<p>Our results show instances of cyto-nuclear incongruence<lb/> in the clownfish phylogenetic tree, which suggests several<lb/> hybridisation events. The most ancient of those events oc-<lb/>curred in the same time frame as a node that was identi-<lb/>fied twice independently as the highest increase in<lb/> diversification rate happening in the damselfish family<lb/> <ref type="biblio">[22,23]</ref>. This evidence suggests a relationship between this<lb/> ancient hybridisation event and the main burst of diversifi-<lb/>cation of the adaptive radiation of clownfishes. Moreover,<lb/> we identify nodes with an excess of homoplasy that can be<lb/> attributed to more recent hybridisation events. Finally, we<lb/> identify the parental lineages of four hybrid individuals,<lb/> showing that hybridisation still occurs within clownfishes.<lb/> This evidence suggests that the diversification of the<lb/> clownfishes has been likely fuelled by hybridisation events<lb/> that created novel phenotypes and eventually new species<lb/> in a manner similar to the well-known East African<lb/> cichlids.<lb/></p>
 
 			<figure>
-				<trash>(a)<lb/> (b)<lb/></trash> 
+				<figure_text>(a)<lb/> (b)<lb/></figure_text> 
 				
 				<head>Figure 3 Mitochondrial phylogeny of hybrid individuals.</head> 
 				
@@ -55,7 +55,7 @@
 			</figure>	
 				
 			<figure>
-				<trash>(a)<lb/> (b)<lb/></trash> 
+				<figure_text>(a)<lb/> (b)<lb/></figure_text> 
 				 
 				<head>Figure 2 Homoplasy excess test.</head> 
 				
@@ -67,7 +67,7 @@
 			<p>We reconstruct separately the phylogenetic trees of the<lb/> mitochondrial (three markers) and nuclear (seven markers)<lb/> genomes. Most nodes show high posterior probabilities,<lb/> yet, several shallow nodes of our mitochondrial and nuclear<lb/> trees are only weakly supported. This can originate from<lb/> the lack of phylogenetic informative sites between closely<lb/> related species. Previous studies of phylogenetic relation-<lb/>ships of the Pomacentridae inferred by mitochondrial or<lb/> nuclear markers, all support the monophyly of the clown-<lb/>fish as well as the existence of the main clownfish clades<lb/> <ref type="biblio">[18,23-25]</ref>. The topology obtained with the mitochondrial<lb/> data corresponds to these published phylogenetic trees.<lb/> We find several deep cytonuclear discordances in the<lb/> clownfish. The relative position of the ephippium clade<lb/> changes radically between the two datasets, which sug-<lb/>gests the occurrence of hybridisation in the timeframe of<lb/> node 8 (<ref type="figure">Figure 2</ref>). While this node is not basal to all<lb/></p>
 
 			<figure>
-				<trash>(a)<lb/> (b)<lb/></trash>  
+				<figure_text>(a)<lb/> (b)<lb/></figure_text>  
 			
 				<head>Figure 4 Nuclear phylogeny of hybrid cloned sequences.</head> 
 			
