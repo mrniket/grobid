@@ -872,7 +872,8 @@ public class FullTextParser extends AbstractParser {
                 if (!currentTag0.equals("<table>") &&
                         !currentTag0.equals("<trash>") &&
                         !currentTag0.equals("<figure_head>") &&
-                        !currentTag0.equals("<figDesc>")) {
+                        !currentTag0.equals("<figDesc>") &&
+                        !currentTag0.equals("<figure_text>")) {
                     if (openFigure) {
                         buffer.append("\n\t\t\t</figure>\n\n");
                     }
@@ -1258,6 +1259,9 @@ public class FullTextParser extends AbstractParser {
 
             } else if (lastTag0.equals("<figDesc>")) {
                 buffer.append("</figDesc>\n");
+
+            } else if (lastTag0.equals("<figure_text>")) {
+                buffer.append("</figure_text>\n\n");
 
             } else if (lastTag0.equals("<figure_head>")) {
                 buffer.append("</head>\n\n");
