@@ -17,7 +17,7 @@
 			</figure>
 
 			<figure>
-				<trash>−5 −2.5<lb/> 0 2.5<lb/> 5 0<lb/> 100<lb/> 200<lb/> 300<lb/> 400<lb/> 500<lb/> 600<lb/> Concentration (µm<lb/> −1<lb/> )<lb/> Coordinate (µm)<lb/> −5 −2.5<lb/> 0 2.5<lb/> 5 0<lb/> 200<lb/> 400<lb/> 600<lb/></trash>
+				<figure_text>−5 −2.5<lb/> 0 2.5<lb/> 5 0<lb/> 100<lb/> 200<lb/> 300<lb/> 400<lb/> 500<lb/> 600<lb/> Concentration (µm<lb/> −1<lb/> )<lb/> Coordinate (µm)<lb/> −5 −2.5<lb/> 0 2.5<lb/> 5 0<lb/> 200<lb/> 400<lb/> 600<lb/></figure_text>
 				<head>Figure 2:</head>
 				<figDesc>Polaritonic droplet transport in 1D channel for<lb/> different temperatures. Backscattering is suppressed at<lb/> some temperature due to scattering on phonons.<lb/></figDesc>
 			</figure>

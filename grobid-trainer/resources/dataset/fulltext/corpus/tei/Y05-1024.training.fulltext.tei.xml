@@ -35,7 +35,7 @@
 			<p><ref type="figure">Figure 1</ref> shows the configuration of our retrieval system.<lb/> The telephone service module receives a phone call from the user. This module prepares the search<lb/> operation by calling the LVCSR module, which recognizes the query spoken over the phone, and the<lb/> text retrieval module, which provides the search result for the query.<lb/></p>
 
 			<figure>
-				<trash>Telephone<lb/> Service<lb/> Module<lb/> Web<lb/> Service<lb/> Module<lb/> LVCSR<lb/> Module<lb/> Text<lb/> Retrieval<lb/> Module<lb/> User&apos;s<lb/> Manual<lb/> Index<lb/> Telephone<lb/> Network<lb/> The Internet<lb/> The Internet<lb/></trash>
+				<figure_text>Telephone<lb/> Service<lb/> Module<lb/> Web<lb/> Service<lb/> Module<lb/> LVCSR<lb/> Module<lb/> Text<lb/> Retrieval<lb/> Module<lb/> User&apos;s<lb/> Manual<lb/> Index<lb/> Telephone<lb/> Network<lb/> The Internet<lb/> The Internet<lb/></figure_text>
 				<head>Figure 1:</head>
 				<figDesc>The configuration of the prototype system.<lb/></figDesc>
 			</figure>
