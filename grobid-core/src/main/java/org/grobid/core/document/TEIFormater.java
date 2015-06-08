@@ -12,6 +12,8 @@ import org.grobid.core.utilities.KeyGen;
 import org.grobid.core.utilities.LanguageUtilities;
 import org.grobid.core.utilities.TextUtilities;
 
+import java.io.File;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.SortedSet;
@@ -1055,7 +1057,9 @@ public class TEIFormater {
         String s2 = null;
         String lastTag = null;
 		String lastOriginalTag = "";
-		//System.out.println(result);
+//        PrintWriter printWriter = new PrintWriter(new File("resultOFE.txt"));
+//		printWriter.println(result);
+//        printWriter.close();
         // current token position
         int p = 0;
         boolean start = true;
@@ -1233,6 +1237,7 @@ public class TEIFormater {
 
             if ((currentTag0 != null) && 
                     !currentTag0.equals("<trash>") &&
+                    !currentTag0.equals("<figure_text>") &&
                     !currentTag0.equals("<figure_head>") &&
                     !currentTag0.equals("<figDesc>")) {
                 if (openFigure) {
@@ -2015,7 +2020,9 @@ public class TEIFormater {
 
             } else if (lastTag0.equals("<trash>")) {
                 buffer.append("<trash>" + text + "</trash>\n\n");
-            } 
+            } else if (lastTag0.equals("<figure_text>")) {
+                buffer.append("<figure_text>" + text + "</figure_text>\n\n");
+            }
 			else {
                 res = false;
             }
@@ -2624,7 +2631,8 @@ public class TEIFormater {
             if (!currentTag0.equals("<figure_head>") &&
                     !currentTag0.equals("<figDesc>") &&
                     !currentTag0.equals("<table>") &&
-                    !currentTag0.equals("<trash>")) {
+                    !currentTag0.equals("<trash>") &&
+                    !currentTag0.equals("<figure_text>")) {
 
                 if (elements.size() > 0) {
                     String lastElement = elements.get(elements.size() - 1);

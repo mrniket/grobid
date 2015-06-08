@@ -181,6 +181,9 @@ public class TEIFulltextSaxParser extends DefaultHandler {
 			else if (qName.equals("trash")) {
                 currentTags.push("<trash>");
 				currentTag = "<trash>";
+            } else if (qName.equals("figure_text")) {
+                currentTags.push("<figure_text>");
+                currentTag = "<figure_text>";
             }
 			else {
                 currentTags.push("<other>");
@@ -190,7 +193,7 @@ public class TEIFulltextSaxParser extends DefaultHandler {
     }
 
     private void writeData(String qName, boolean pop) {
-        if ((qName.equals("other")) || 
+        if ((qName.equals("other")) || qName.equals("figure_text") ||
                 (qName.equals("ref")) || (qName.equals("head")) || 
                 (qName.equals("figure_head")) ||
                 (qName.equals("p")) || (qName.equals("paragraph")) ||
