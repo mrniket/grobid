@@ -35,7 +35,7 @@
 			<p><ref type="figure">Figure 1</ref> shows the configuration of our retrieval system.<lb/> The telephone service module receives a phone call from the user. This module prepares the search<lb/> operation by calling the LVCSR module, which recognizes the query spoken over the phone, and the<lb/> text retrieval module, which provides the search result for the query.<lb/></p>
 
 			<figure>
-				<trash>Telephone<lb/> Service<lb/> Module<lb/> Web<lb/> Service<lb/> Module<lb/> LVCSR<lb/> Module<lb/> Text<lb/> Retrieval<lb/> Module<lb/> User&apos;s<lb/> Manual<lb/> Index<lb/> Telephone<lb/> Network<lb/> The Internet<lb/> The Internet<lb/></trash>
+				<figure_text>Telephone<lb/> Service<lb/> Module<lb/> Web<lb/> Service<lb/> Module<lb/> LVCSR<lb/> Module<lb/> Text<lb/> Retrieval<lb/> Module<lb/> User&apos;s<lb/> Manual<lb/> Index<lb/> Telephone<lb/> Network<lb/> The Internet<lb/> The Internet<lb/></figure_text>
 				<head>Figure 1:</head>
 				<figDesc>The configuration of the prototype system.<lb/></figDesc>
 			</figure>
@@ -125,7 +125,7 @@
 			<figure>
 				<head>Table 1:</head>
 				<figDesc>An example of a synonym dictionary<lb/></figDesc> 
-				<trash>Standard Expression<lb/> Synonymous Expressions<lb/> saito<lb/> webu<lb/> hômupêji<lb/> (site)<lb/> (web)<lb/> (homepage)<lb/> chakushin&apos;on<lb/> chakushinmerodî<lb/> yobidashion<lb/> (ringtone)<lb/> (ring melody)<lb/> (phone beep)<lb/> ridaiaru<lb/> môichido  kakeru<lb/> (redial)<lb/> (again  call)<lb/></trash>
+				<figure_text>Standard Expression<lb/> Synonymous Expressions<lb/> saito<lb/> webu<lb/> hômupêji<lb/> (site)<lb/> (web)<lb/> (homepage)<lb/> chakushin&apos;on<lb/> chakushinmerodî<lb/> yobidashion<lb/> (ringtone)<lb/> (ring melody)<lb/> (phone beep)<lb/> ridaiaru<lb/> môichido  kakeru<lb/> (redial)<lb/> (again  call)<lb/></figure_text>
 			</figure>
 
 			<head level="1">4. Prototype System<lb/></head> 
@@ -172,13 +172,13 @@
 			<figure>
 				<head>Table 3:</head> 
 				<figDesc>The retrieval success rate for the transcriptions of queries.<lb/></figDesc>
-				<trash>Retrieval Success Rate for Transcriptions<lb/> Number of<lb/> Result<lb/> Passages<lb/> BL<lb/> WP<lb/> WP+AUX<lb/> ALL<lb/> 1<lb/> 40.0%<lb/> 42.7%<lb/> 44.5%<lb/> 49.1%<lb/> 5<lb/> 65.5%<lb/> 69.1%<lb/> 70.0%<lb/> 77.3%<lb/> 10<lb/> 73.6%<lb/> 73.6%<lb/> 74.5%<lb/> 87.3%<lb/></trash>
+				<figure_text>Retrieval Success Rate for Transcriptions<lb/> Number of<lb/> Result<lb/> Passages<lb/> BL<lb/> WP<lb/> WP+AUX<lb/> ALL<lb/> 1<lb/> 40.0%<lb/> 42.7%<lb/> 44.5%<lb/> 49.1%<lb/> 5<lb/> 65.5%<lb/> 69.1%<lb/> 70.0%<lb/> 77.3%<lb/> 10<lb/> 73.6%<lb/> 73.6%<lb/> 74.5%<lb/> 87.3%<lb/></figure_text>
 			</figure>
 
 			<figure>
 				<head>Table 4:</head>  
 				<figDesc>The retrieval success rate for the utterances of queries.<lb/></figDesc>
-				<trash>Number of<lb/> Result Passages<lb/> Retrieval Success Rate<lb/> for Utterances<lb/> 1<lb/> 44.3%<lb/> 5<lb/> 72.5%<lb/> 10<lb/> 81.4%<lb/></trash>
+				<figure_text>Number of<lb/> Result Passages<lb/> Retrieval Success Rate<lb/> for Utterances<lb/> 1<lb/> 44.3%<lb/> 5<lb/> 72.5%<lb/> 10<lb/> 81.4%<lb/></figure_text>
 			</figure>	
 
 			<p>Next we present the performance of the total system. <ref type="table">Table 4</ref> shows the result for 660 utterances<lb/> of the queries by 18 speakers where the LVCSR module and the text retrieval module in the<lb/> prototype system are used. The retrieval success rates for utterances are almost the same as those<lb/> for transcription. Since the cellular phones used in this system can display about 10 lines on the<lb/> average, the 10th retrieval rate represents the rate of successfully delivering the passage requested by<lb/> the user. The result shows that the system designed for cellular phone user&apos;s manual was able to<lb/> direct user to appropriate information at 81.4%, which is sufficient for practical use.<lb/></p>
