@@ -12,8 +12,6 @@ import org.grobid.core.utilities.KeyGen;
 import org.grobid.core.utilities.LanguageUtilities;
 import org.grobid.core.utilities.TextUtilities;
 
-import java.io.File;
-import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.SortedSet;
@@ -1119,7 +1117,7 @@ public class TEIFormater {
                             Pattern pattern = Pattern.compile("image-(\\d+)");
                             Matcher matcher = pattern.matcher(vecFile);
                             matcher.find();
-                            Integer pageNumber = Integer.parseInt(matcher.group(1));
+                            Integer pageNumber = Integer.parseInt(matcher.group(1)) - 1;
                             nto.setFile("figureSVGs/page-" + pageNumber + ".svg");
 		                    graphicObjects.add(nto);
 						}

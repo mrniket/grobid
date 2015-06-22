@@ -178,7 +178,7 @@ public class Segmentation extends AbstractParser {
                                     }
                                 } else if (currFile.getName().toLowerCase().endsWith(".jpg")
                                         || currFile.getName().toLowerCase().endsWith(".ppm")
-                                    //	|| currFile.getName().toLowerCase().endsWith(".pbm")
+//                                    	|| currFile.getName().toLowerCase().endsWith(".pbm")
                                         ) {
                                     try {
                                         final BufferedImage bi = ImageIO.read(currFile);
@@ -187,11 +187,10 @@ public class Segmentation extends AbstractParser {
                                             outputfilePath = assetFile.getPath() + "/" +
                                                     currFile.getName().toLowerCase().replace(".jpg", ".png");
                                         }
-										/*else if (currFile.getName().toLowerCase().endsWith(".pbm")) {
+										else if (currFile.getName().toLowerCase().endsWith(".pbm")) {
 											outputfilePath = assetFile.getPath() + "/" +
 												 currFile.getName().toLowerCase().replace(".pbm",".png");
-										}*/
-                                        else {
+										} else {
                                             outputfilePath = assetFile.getPath() + "/" +
                                                     currFile.getName().toLowerCase().replace(".ppm", ".png");
                                         }

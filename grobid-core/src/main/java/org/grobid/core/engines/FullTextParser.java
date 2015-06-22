@@ -154,11 +154,19 @@ public class FullTextParser extends AbstractParser {
                     figureParser.addLayoutTokenToSVG(pageToSVGDocument, layoutTokens.get(i));
                 }
             }
+            List<Block> blocks = doc.getBlocks();
+            for (Block block : blocks) {
+                if (block.getText().startsWith("@IMAGE") && block.getText().endsWith(".ppm\n")) {
+//                    System.out.println("FOUND IMAGE: " +  block.getText() + " which is on page: " + block.getPage());
+                    figureParser.addImageToSVG(pageToSVGDocument, block);
+                }
+            }
             figureParser.saveAndCloseSVGDocuments(pageToSVGDocument, assetPath);
 
 			// possible annexes (view as a piece of full text similar to the body)
 			documentBodyParts = doc.getDocumentPart(SegmentationLabel.ANNEX);
-            featSeg = getBodyTextFeatured(doc, documentBodyParts);
+            featSeg = getAnnexTextFeatured(doc, documentBodyParts);
+//            featSeg = getBodyTextFeatured(doc, documentBodyParts);
 			String rese2 = null;
 			List<String> tokenizationsBody2 = null;
 			if (featSeg != null) {
@@ -187,8 +195,18 @@ public class FullTextParser extends AbstractParser {
         }
     }
 
-	static public Pair<String,List<String>> getBodyTextFeatured(Document doc, 
-												SortedSet<DocumentPiece> documentBodyParts) {
+    private Pair<String, List<String>> getAnnexTextFeatured(Document doc, SortedSet<DocumentPiece> documentBodyParts) {
+        return getBodyTextFeatured(doc, documentBodyParts, false);
+    }
+
+    static public Pair<String,List<String>> getBodyTextFeatured(Document doc,
+                                                                SortedSet<DocumentPiece> documentBodyParts) {
+        return getBodyTextFeatured(doc, documentBodyParts, true);
+    }
+
+    static public Pair<String,List<String>> getBodyTextFeatured(Document doc,
+												SortedSet<DocumentPiece> documentBodyParts,
+                                                boolean isBody) {
 		if ((documentBodyParts == null) || (documentBodyParts.size() == 0)) {				
 			return null;
 		}
@@ -355,7 +373,9 @@ public class FullTextParser extends AbstractParser {
 	                    filter = true;
 	                } else if (text.contains(".jpg")) {
 	                    filter = true;
-	                }
+	                } else if (text.contains(".png")) {
+                        filter = true;
+                    }
 
 	                if (filter) {
 	                    n++;
@@ -419,7 +439,8 @@ public class FullTextParser extends AbstractParser {
 	                                            && (!(toto.startsWith("@IMAGE")))
 	                                            && (!text.contains(".pbm"))
 	                                            && (!text.contains(".vec"))
-	                                            && (!text.contains(".jpg"))) {
+	                                            && (!text.contains(".jpg"))
+                                                && !text.contains(".png")) {
 	                                        endloop = true;
 	                                    }
 	                                }
@@ -571,7 +592,10 @@ public class FullTextParser extends AbstractParser {
             	//blockPos++;
 			}
         }
-        doc.setBodyLayoutTokens(bodyTokens);
+        if (isBody) {
+            doc.setBodyLayoutTokens(bodyTokens);
+        }
+
         if (previousFeatures != null)
             fulltext.append(previousFeatures.printVector());
 
@@ -1337,7 +1361,8 @@ public class FullTextParser extends AbstractParser {
 				SortedSet<DocumentPiece> documentAcknowledgementParts = 
 					doc.getDocumentPart(SegmentationLabel.ACKNOWLEDGEMENT);
 				Pair<String,List<String>> featSeg = 
-					getBodyTextFeatured(doc, documentAcknowledgementParts);
+//					getBodyTextFeatured(doc, documentAcknowledgementParts);
+                    getAcknowledgementFeatured(doc, documentAcknowledgementParts);
 				List<String> tokenizationsAcknowledgement = null;
 				if (featSeg != null) {
 					// if featSeg is null, it usually means that no body segment is found in the 
@@ -1370,6 +1395,10 @@ public class FullTextParser extends AbstractParser {
         }
 //System.out.println(tei.toString());		
         doc.setTei(tei.toString());
+    }
+
+    private Pair<String, List<String>> getAcknowledgementFeatured(Document doc, SortedSet<DocumentPiece> documentAcknowledgementParts) {
+        return getBodyTextFeatured(doc, documentAcknowledgementParts, false);
     }
 
     @Override

@@ -87,30 +87,31 @@ public class FigureDomParser {
 
         for (File file : listOfFiles) {
             if (file.isFile()) {
-//                System.out.println("got file: " + file.getName());
-                System.out.println("absolute path: " + file.getAbsolutePath().replaceAll(" ", "\\ "));
-//                System.out.println("absolute path: " + file.getAbsolutePath().replaceAll("[a-zA-Z]( )[a-zA-Z]", "\\ "));
-//                System.out.println(assetPath + "/figureSVGs/" + FilenameUtils.removeExtension(file.getName()) + ".svg");
-                String[] cmd = {
-                        "/usr/local/bin/python",
-                        "/Users/Niket/Downloads/vec2svg-2.py",
-                        "-i",
-                        file.getAbsolutePath().replaceAll(" ", "\\ "),
-                        "-o",
-                        assetPath + "/figureSVGs/" + FilenameUtils.removeExtension(file.getName()) + ".svg"
-                };
-                try {
-                    Process process = Runtime.getRuntime().exec(cmd);
+                String extension = FilenameUtils.getExtension(file.getName());
+                if (extension.equals("vec")) {
+                    System.out.println("absolute path: " + file.getAbsolutePath().replaceAll(" ", "\\ "));
+                    String[] cmd = {
+                            "/usr/local/bin/python",
+                            "/Users/Niket/Downloads/vec2svg-2.py",
+                            "-i",
+                            file.getAbsolutePath().replaceAll(" ", "\\ "),
+                            "-o",
+                            assetPath + "/figureSVGs/" + FilenameUtils.removeExtension(file.getName()) + ".svg"
+                    };
+                    try {
+                        Process process = Runtime.getRuntime().exec(cmd);
 
-                    BufferedReader stdInput = new BufferedReader(new InputStreamReader(process.getInputStream()));
-                    String s;
-                    while ((s = stdInput.readLine()) != null) {
-                        LOGGER.debug(s);
-                        System.out.println(s);
+                        BufferedReader stdInput = new BufferedReader(new InputStreamReader(process.getInputStream()));
+                        String s;
+                        while ((s = stdInput.readLine()) != null) {
+                            LOGGER.debug(s);
+                            System.out.println(s);
+                        }
+                    } catch (IOException e) {
+                        e.printStackTrace();
                     }
-                } catch (IOException e) {
-                    e.printStackTrace();
                 }
+
             }
         }
     }

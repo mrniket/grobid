@@ -4,10 +4,13 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.grobid.core.document.Document;
+import org.grobid.core.layout.Block;
 import org.grobid.core.layout.LayoutToken;
+import org.grobid.core.utilities.ImageUtils;
 import org.w3c.dom.Element;
 import org.xml.sax.SAXException;
 
+import javax.imageio.ImageIO;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -17,6 +20,7 @@ import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
@@ -168,5 +172,28 @@ public class FigureParser {
 
     public void setDocument(Document document) {
         this.document = document;
+    }
+
+    public void addImageToSVG(Map<Integer, org.w3c.dom.Document> pageToSVGDocument, Block block) {
+        String fileName = FilenameUtils.getBaseName(block.getText().split(" ")[1]);
+        System.out.println(fileName);
+        File imageFile = new File(assetPath + "/" + fileName + ".png");
+        try {
+            BufferedImage bufferedImage = ImageIO.read(imageFile);
+            String imageString = ImageUtils.encodeToString(bufferedImage, "png");
+            org.w3c.dom.Document document = pageToSVGDocument.get(block.getPage());
+            if (document != null) {
+                Element rootElement = (Element) document.getFirstChild();
+                Element imageElement = document.createElement("image");
+                imageElement.setAttribute("width", String.valueOf(block.getWidth()));
+                imageElement.setAttribute("height", String.valueOf(block.getHeight()));
+                imageElement.setAttribute("x", String.valueOf(block.getX()));
+                imageElement.setAttribute("y", String.valueOf(block.getY()));
+                imageElement.setAttribute("xlink:href", "data:image/png;base64," + imageString);
+                rootElement.insertBefore(imageElement, rootElement.getFirstChild());
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }
